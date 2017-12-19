@@ -1,28 +1,28 @@
 import django
 from django.core.urlresolvers import reverse
+from django.test import override_settings, modify_settings
 
 from tests.test_admin import APIAuthenticatedTestCase
 
+middleware_modifications = {
+    'append': 'rest_framework_api_key.middleware.APIKeyMiddleware'
+}
+if django.VERSION >= (1, 10):
+    # in Django 1.10, MIDDLEWARE_CLASSES was changed to MIDDLEWARE
+    middleware = dict(MIDDLEWARE=middleware_modifications)
+else:
+    middleware = dict(MIDDLEWARE_CLASSES=middleware_modifications)
 
+
+@override_settings(REST_FRAMEWORK={
+    'DEFAULT_PERMISSION_CLASSES':
+        ('rest_framework.permissions.AllowAny',),
+})
+@modify_settings(**middleware)
 class APIMiddlewareTest(APIAuthenticatedTestCase):
     """
     Test authentication using API key middleware.
     """
-
-    def setUp(self):
-        self.override_settings(REST_FRAMEWORK={
-            'DEFAULT_PERMISSION_CLASSES':
-                ('rest_framework.permissions.AllowAny',),
-        })
-
-        middleware = {
-            'append': 'rest_framework_api_key.middleware.APIKeyMiddleware'
-        }
-        if django.VERSION >= (1, 10):
-            # in Django 1.10, MIDDLEWARE_CLASSES was changed to MIDDLEWARE
-            self.modify_settings(MIDDLEWARE=middleware)
-        else:
-            self.modify_settings(MIDDLEWARE_CLASSES=middleware)
 
     def test_get_view_authorized(self):
         """
