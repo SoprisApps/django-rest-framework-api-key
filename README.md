@@ -44,11 +44,16 @@ response = requests.get(
 
 
 ### Tests
-    
-    pyvenv env
-    source env/bin/activate
-    pip install -r requirements/requirements-testing.txt
-    python runtests.py
+Make sure you have `tox` installed in your global instance of Python.  It is recommended to develop with the latest
+version of Python and Django that this library supports.  Make sure you have the appropriate version of Python installed
+on your machine to test in that environment.  To see all environments this library supports, run:
+
+    tox --listenvs
+
+Then, choose an environment to run tests using.  Tox will setup the virtual environment and install all appropriate
+dependencies.  Travis CI will execute tests on across all environments.
+
+    tox -e py35-django110
 
 
 ### Contributing
