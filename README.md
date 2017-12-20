@@ -2,7 +2,7 @@
 Authenticate Web APIs made with Django REST Framework
 
 
-### Supports
+## Supports
   - Django Rest Framework (>=3.7)
     - Python (2.7, 3.4, 3.5, 3.6)
     - Django (1.10, 1.11)
@@ -15,8 +15,7 @@ Authenticate Web APIs made with Django REST Framework
     - Python (2.7, 3.4, 3.5)
     - Django (1.8, 1.9)
 
-
-### Installation
+## Installation
 
 Install using pip:
 
@@ -29,7 +28,11 @@ Add 'rest_framework_api_key' to your `INSTALLED_APPS` setting:
         'rest_framework_api_key',
     )
 
-Finally set the django-rest-framework permissions under your django settings:
+There are two ways you can use DRF API Key: with a permission class or
+as Django middleware.
+
+## Permission Class
+Set the django-rest-framework permissions under your django settings:
 
     REST_FRAMEWORK = {
         'DEFAULT_PERMISSION_CLASSES': (
@@ -37,8 +40,40 @@ Finally set the django-rest-framework permissions under your django settings:
         )
     }
 
+This sets the default permission class for all views in your API.  If
+you manually set `permission_classes = ` in any view, you need to add
+the `HasAPIAccess` class to the tuple or else that API call will not be
+protected.
 
-### Example Request
+### Middleware
+If you would rather install this as Django middleware, then do not set
+your permission classes in any DRF views (this would cause the API key
+to be tested twice for each API call!).  Instead, append the middleware
+to your list:
+
+Django >= 1.10:
+
+    MIDDLEWARE = (
+        ...
+        'rest_framework_api_key.middleware.HasAPIAccessMiddleware',
+    )
+
+Django < 1.10:
+
+    MIDDLEWARE_CLASSES = (
+        ...
+        'rest_framework_api_key.middleware.HasAPIAccessMiddleware',
+    )
+
+And then define a tuple of URL prefixes that this middleware should not
+check API access for.  Without the below setting, you won't be able to
+access the Django Admin app!
+
+    REST_FRAMEWORK_API_KEY_MIDDLEWARE_EXCLUDED_URL_PREFIXES = (
+        '/admin',
+    )
+
+## Example Request
 
 ```python
 response = requests.get(
@@ -49,8 +84,25 @@ response = requests.get(
 )
 ```
 
+## Optional Settings
+In your Django Settings file, you can change the name of the header
+token that should be passed.  The default is `api-key`, as shown in the
+example request.  The custom key must not contain the '_' character.
 
-### Tests
+    REST_FRAMEWORK_API_KEY_HEADER_TOKEN = 'x-my-custom-api-key'
+
+Here's an associated example request:
+
+```python
+response = requests.get(
+    url="http://0.0.0.0:8000/api/login",
+    headers={
+        "x-my-custom-api-key": "fd8b4a98c8f53035aeab410258430e2d86079c93",
+    },
+)
+```
+
+## Tests
 Make sure you have `tox` installed in your global instance of Python.  It is recommended to develop with the latest
 version of Python and Django that this library supports.  Make sure you have the appropriate version of Python installed
 on your machine to test in that environment.  To see all environments this library supports, run:
@@ -63,7 +115,7 @@ dependencies.  Travis CI will execute tests on across all environments.
     tox -e py35-django110
 
 
-### Contributing
+## Contributing
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`

@@ -7,11 +7,10 @@ try:
 except ImportError:
     MiddlewareMixin = object
 
-from rest_framework.request import Request
-from rest_framework_api_key.permissions import HasAPIAccess
+from rest_framework_api_key.helpers import ApiKeyTestMixin
 
 
-class APIKeyMiddleware(MiddlewareMixin):
+class HasAPIAccessMiddleware(MiddlewareMixin, ApiKeyTestMixin):
     """
     A custom middleware to provide API key validation for all requests that works for Django >= 1.8.
     """
@@ -23,7 +22,9 @@ class APIKeyMiddleware(MiddlewareMixin):
         :param request: The HTTP request.
         :type request: :class:`django.http.HttpRequest`
         """
-        permission_object = HasAPIAccess()
 
-        if not permission_object.has_permission(Request(request)):
+        api_key = self.get_key_from_headers(request)
+
+        is_valid = self.is_excluded_prefix(request) or self.is_valid_key(api_key)
+        if not is_valid:
             raise PermissionDenied('API key missing or invalid.')

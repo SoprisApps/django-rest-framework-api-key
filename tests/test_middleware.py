@@ -5,7 +5,7 @@ from django.test import override_settings, modify_settings
 from tests.test_admin import APIAuthenticatedTestCase
 
 middleware_modifications = {
-    'append': 'rest_framework_api_key.middleware.APIKeyMiddleware'
+    'append': 'rest_framework_api_key.middleware.HasAPIAccessMiddleware'
 }
 if django.VERSION >= (1, 10):
     # in Django 1.10, MIDDLEWARE_CLASSES was changed to MIDDLEWARE
