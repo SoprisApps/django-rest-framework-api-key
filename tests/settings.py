@@ -1,3 +1,4 @@
+import django
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,7 +34,7 @@ REST_FRAMEWORK = {
     )
 }
 
-MIDDLEWARE = (
+list_of_middleware = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -43,6 +44,11 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+
+if django.VERSION >= (1, 10):
+    MIDDLEWARE = list_of_middleware
+else:
+    MIDDLEWARE_CLASSES = list_of_middleware
 
 ROOT_URLCONF = 'tests.urls'
 
