@@ -3,10 +3,17 @@ Authenticate Web APIs made with Django REST Framework
 
 
 ### Supports
+  - Django Rest Framework (>=3.7)
+    - Python (2.7, 3.4, 3.5, 3.6)
+    - Django (1.10, 1.11)
 
-  - Python (2.7, 3.3, 3.4, 3.5)
-  - Django (1.8, 1.9, 1.10)
-  - Django Rest Framework (3+)
+  - Django Rest Framework (3.4, 3.5, 3.6)
+    - Python (2.7, 3.4, 3.5)
+    - Django (1.8, 1.9, 1.10)
+
+  - Django Rest Framework (3.3)
+    - Python (2.7, 3.4, 3.5)
+    - Django (1.8, 1.9)
 
 
 ### Installation
