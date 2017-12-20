@@ -29,6 +29,13 @@ class APIAuthenticatedTestCase(TestCase):
         self.header = {'HTTP_API_KEY': self.app_key.key}
 
 
+class APIAuthenticatedTestCaseAlternateHeaderToken(APIAuthenticatedTestCase):
+
+    def setUp(self):
+        self.app_key = APIKey.objects.create(name=self.APP_NAME, key=generate_key())
+        self.header = {'HTTP_CUSTOM_API_KEY': self.app_key.key}
+
+
 class AdminTestCase(LoggedInAdminTestCase, APIAuthenticatedTestCase):
     def setUp(self):
         super(AdminTestCase, self).setUp()
